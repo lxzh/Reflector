@@ -1,5 +1,6 @@
 package com.lxzh123.reflector;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -21,11 +22,12 @@ public class Reflector28 extends Reflector26 {
         }
     }
 
-    public Reflector28(Class clazz) {
+    Reflector28(Class clazz) {
         super(clazz);
     }
 
-    private synchronized Method getMethod(String methodName) {
+    @Override
+    protected synchronized Method getMethodInternal(String methodName) {
         Method method = reflectorMaps.get(methodName);
         if (method == null) {
             try {
@@ -39,18 +41,25 @@ public class Reflector28 extends Reflector26 {
     }
 
     @Override
-    public String getPackageName$() {
-        Method method = getMethod("getPackageName$");
-        String rtn = null;
-        try {
-            rtn = (String) method.invoke(mClazz, nullParams);
-        } catch (Throwable t) {
-            t.printStackTrace();
+    protected synchronized Method getMethodInternal(String methodName, Class<?>... parameterTypes) {
+        Method method = reflectorMaps.get(methodName + parameterTypes.hashCode());
+        if (method == null) {
+            try {
+                method = (Method)getDeclareMethod.invoke(Class.class, methodName, parameterTypes);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            reflectorMaps.put(methodName + parameterTypes.hashCode(), method);
         }
-        return rtn;
+        return method;
     }
 
-    public static Class<?> forName(String name) {
+    @Override
+    String getPackageName$() {
+        return super.getPackageName$();
+    }
+
+    static Class<?> forName(String name) {
         Class<?> rtn = null;
         try {
             rtn = (Class<?>)forNameMethod.invoke(Class.class, name);
@@ -61,8 +70,8 @@ public class Reflector28 extends Reflector26 {
     }
 
     @Override
-    public Class<?>[] getClasses() {
-        Method method = getMethod("getClasses");
+    Class<?>[] getClasses() {
+        Method method = getMethodInternal("getClasses");
         Class<?>[] rtn = null;
         try {
             rtn = (Class<?>[]) method.invoke(mClazz, nullParams);
@@ -73,8 +82,8 @@ public class Reflector28 extends Reflector26 {
     }
 
     @Override
-    public Field[] getFields() {
-        Method method = getMethod("getFields");
+    Field[] getFields() {
+        Method method = getMethodInternal("getFields");
         Field[] rtn = null;
         try {
             rtn = (Field[]) method.invoke(mClazz, nullParams);
@@ -85,11 +94,45 @@ public class Reflector28 extends Reflector26 {
     }
 
     @Override
-    public Field[] getDeclaredFields() {
-        Method method = getMethod("getDeclaredFields");
+    Field[] getDeclaredFields() {
+        Method method = getMethodInternal("getDeclaredFields");
         Field[] rtn = null;
         try {
             rtn = (Field[]) method.invoke(mClazz, nullParams);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return rtn;
+    }
+
+    @Override
+    Field[] getDeclaredFieldsUnchecked(boolean publicOnly) {
+        return super.getDeclaredFieldsUnchecked(publicOnly);
+    }
+
+    @Override
+    Method[] getDeclaredMethods(){
+        Method method = getMethodInternal("getDeclaredMethods");
+        Method[] rtn = null;
+        try {
+            rtn = (Method[]) method.invoke(mClazz, nullParams);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return rtn;
+    }
+
+    @Override
+    Method getInstanceMethod(String name, Class<?>[] parameterTypes) {
+        return super.getInstanceMethod(name,parameterTypes);
+    }
+
+    @Override
+    Constructor<?> getDeclaredConstructor(Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException{
+        Method method = getMethodInternal("getDeclaredConstructor", parameterTypes);
+        Constructor<?> rtn = null;
+        try {
+            rtn = (Constructor<?>) method.invoke(mClazz, nullParams);
         } catch (Throwable t) {
             t.printStackTrace();
         }

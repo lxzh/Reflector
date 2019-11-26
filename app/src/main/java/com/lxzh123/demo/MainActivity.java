@@ -7,10 +7,9 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.lxzh123.reflector.Reflector;
-import com.lxzh123.reflector.Reflector00;
-import com.lxzh123.reflector.Reflector28;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = "TestReflector";
@@ -21,10 +20,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Class[] classes = null;
         Field[] fields = null;
+        Method[] methods = null;
 
-        Reflector00 reflector = new Reflector28(MainActivity.class);
-        Log.d(TAG, "packageName$=" + reflector.of(this).getPackageName$());
-        Log.d(TAG, "package=" + reflector.of(this).getPackage());
+        Reflector reflector = Reflector.on(MainActivity.class);
+        Log.d(TAG, "packageName$=" + reflector.getPackageName$());
+        Log.d(TAG, "package=" + reflector.getPackage().getName());
         classes = Reflector.forName("android.app.ActivityThread").getClasses();
         for (Class clz : classes) {
             Log.d(TAG, "class1=" + clz);
@@ -68,5 +68,14 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "field2=" + field);
         }
 
+        fields = Reflector.on(Dialog.class).getDeclaredFieldsUnchecked(false);
+        for (Field field : fields) {
+            Log.d(TAG, "field3=" + field);
+        }
+
+        methods = Reflector.forName("android.app.ActivityThread").getDeclaredMethods();
+        for (Method method : methods) {
+            Log.d(TAG, "method1=" + method);
+        }
     }
 }

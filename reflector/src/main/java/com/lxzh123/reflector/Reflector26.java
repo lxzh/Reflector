@@ -8,7 +8,7 @@ import android.annotation.TargetApi;
  * date        2019-11-25
  */
 public class Reflector26 extends Reflector01 {
-    public Reflector26(Class clazz) {
+    Reflector26(Class clazz) {
         super(clazz);
     }
 

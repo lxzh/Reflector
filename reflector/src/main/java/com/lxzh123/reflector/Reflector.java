@@ -1,5 +1,7 @@
 package com.lxzh123.reflector;
 
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,8 +22,10 @@ public class Reflector {
 //    private final boolean isClass;
 
     private void init() {
-        if (SDK_INT < 26) {
+        if (SDK_INT < 24) {
             reflector = new Reflector01(mClass);
+        } else if (SDK_INT < 26) {
+            reflector = new Reflector24(mClass);
         } else if (SDK_INT < 28) {
             reflector = new Reflector26(mClass);
         } else {
@@ -30,16 +34,12 @@ public class Reflector {
     }
 
     private Reflector(Class<?> type) {
-//        this.object = type;
-//        this.isClass = true;
         mClass = type;
         mObject = null;
         init();
     }
 
     private Reflector(Object object) {
-//        this.object = object;
-//        this.isClass = false;
         mClass = object.getClass();
         mObject = object;
         init();
@@ -143,7 +143,7 @@ public class Reflector {
     }
 
 
-    public String getCanonicalName(){
+    public String getCanonicalName() {
         return reflector.getCanonicalName();
     }
 
@@ -167,7 +167,7 @@ public class Reflector {
         return reflector.getFields();
     }
 
-    public Method[] getMethods(){
+    public Method[] getMethods() {
         return reflector.getMethods();
     }
 
@@ -175,9 +175,10 @@ public class Reflector {
         return reflector.getConstructors();
     }
 
-    public Field getField(String name) throws NoSuchFieldException{
+    public Field getField(String name) throws NoSuchFieldException {
         return reflector.getField(name);
     }
+
     public Method getMethod(String name, Class<?>... parameterTypes)
             throws NoSuchMethodException, SecurityException {
         return reflector.getMethod(name, parameterTypes);
@@ -194,5 +195,93 @@ public class Reflector {
 
     public Field[] getDeclaredFields() {
         return reflector.getDeclaredFields();
+    }
+
+    public Field[] getDeclaredFieldsUnchecked(boolean publicOnly) {
+        return reflector.getDeclaredFieldsUnchecked(publicOnly);
+    }
+
+    public Method[] getDeclaredMethods() {
+        return reflector.getDeclaredMethods();
+    }
+
+    public Method getInstanceMethod(String name, Class<?>[] parameterTypes) {
+        return reflector.getInstanceMethod(name, parameterTypes);
+    }
+
+    public Constructor<?> getDeclaredConstructor(Class<?>... parameterTypes)
+            throws NoSuchMethodException, SecurityException {
+        return reflector.getDeclaredConstructor(parameterTypes);
+    }
+
+    public InputStream getResourceAsStream(String name) {
+        return reflector.getResourceAsStream(name);
+    }
+
+    public java.net.URL getResource(String name) {
+        return reflector.getResource(name);
+    }
+
+    public java.security.ProtectionDomain getProtectionDomain() {
+        return reflector.getProtectionDomain();
+    }
+
+    public boolean desiredAssertionStatus() {
+        return reflector.desiredAssertionStatus();
+    }
+
+    public boolean isEnum() {
+        return reflector.isEnum();
+    }
+
+    public <T> T[] getEnumConstants() {
+        return reflector.getEnumConstants();
+    }
+
+    //hide
+    public <T> T[] getEnumConstantsShared() {
+        return reflector.getEnumConstantsShared();
+    }
+
+    public <T> T cast(Object obj) {
+        return reflector.cast(obj);
+    }
+
+    public <U> Class<? extends U> asSubclass(Class<U> clazz) {
+        return reflector.asSubclass(clazz);
+    }
+
+    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+        return reflector.getAnnotation(annotationClass);
+    }
+
+    public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
+        return reflector.isAnnotationPresent(annotationClass);
+    }
+
+    public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {
+        return reflector.getAnnotationsByType(annotationClass);
+    }
+
+    public Annotation[] getAnnotations() {
+        return reflector.getAnnotations();
+    }
+
+    public <A extends Annotation> A getDeclaredAnnotation(Class<A> annotationClass) {
+        return reflector.getDeclaredAnnotation(annotationClass);
+    }
+
+    public Annotation[] getDeclaredAnnotations() {
+        return reflector.getDeclaredAnnotations();
+    }
+
+    //hide
+    public boolean isProxy() {
+        return reflector.isProxy();
+    }
+
+    //hide
+    public int getAccessFlags() {
+        return reflector.getAccessFlags();
     }
 }

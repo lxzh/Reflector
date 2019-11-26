@@ -1,5 +1,7 @@
 package com.lxzh123.reflector;
 
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -21,123 +23,257 @@ public abstract class Reflector00 {
     static Class[] nullTypes = new Class[0];
     static Object[] nullParams = new Object[0];
 
-    public Reflector00(Class clazz) {
+    Reflector00(Class clazz) {
         mClazz = clazz;
     }
 
-    public Reflector00 of(Object obj) {
+    Reflector00 of(Object obj) {
         mObject = obj;
         return this;
     }
 
-    public ClassLoader getClassLoader() {
+    protected abstract Method getMethodInternal(String methodName);
+
+    protected abstract Method getMethodInternal(String methodName, Class<?>... parameterTypes);
+
+    ClassLoader getClassLoader() {
         return mClazz.getClassLoader();
     }
 
-    public synchronized TypeVariable<? extends Class>[] getTypeParameters() {
+    synchronized TypeVariable<? extends Class>[] getTypeParameters() {
         return mClazz.getTypeParameters();
     }
 
-    public Class getSuperclass() {
+    Class getSuperclass() {
         return mClazz.getSuperclass();
     }
 
-    public Type getGenericSuperclass() {
+    Type getGenericSuperclass() {
         return mClazz.getGenericSuperclass();
     }
 
-    public Package getPackage() {
+    Package getPackage() {
         return mClazz.getPackage();
     }
 
-    public abstract String getPackageName$();
+    String getPackageName$() {
+        Method method = getMethodInternal("getPackageName$");
+        String rtn = null;
+        try {
+            rtn = (String) method.invoke(mClazz, nullParams);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return rtn;
+    }
 
-    public Class<?>[] getInterfaces() {
+    Class<?>[] getInterfaces() {
         return mClazz.getInterfaces();
     }
 
-    public Type[] getGenericInterfaces() {
+    Type[] getGenericInterfaces() {
         return mClazz.getGenericInterfaces();
     }
 
-    public Class<?> getComponentType() {
+    Class<?> getComponentType() {
         return mClazz.getComponentType();
     }
 
-    public int getModifiers() {
+    int getModifiers() {
         return mClazz.getModifiers();
     }
 
-    public Object[] getSigners() {
+    Object[] getSigners() {
         return mClazz.getSigners();
     }
 
-    public Method getEnclosingMethod() {
+    Method getEnclosingMethod() {
         return mClazz.getEnclosingMethod();
     }
 
-    public Constructor<?> getEnclosingConstructor() {
+    Constructor<?> getEnclosingConstructor() {
         return mClazz.getEnclosingConstructor();
     }
 
-    public Class<?> getDeclaringClass() {
+    Class<?> getDeclaringClass() {
         return mClazz.getDeclaringClass();
     }
 
-    public Class<?> getEnclosingClass() {
+    Class<?> getEnclosingClass() {
         return mClazz.getEnclosingClass();
     }
 
-    public String getSimpleName() {
+    String getSimpleName() {
         return mClazz.getSimpleName();
     }
 
-    public abstract String getTypeName();
+    abstract String getTypeName();
 
-    public String getCanonicalName(){
+    String getCanonicalName(){
         return mClazz.getCanonicalName();
     }
 
-    public boolean isAnonymousClass() {
+    boolean isAnonymousClass() {
         return mClazz.isAnonymousClass();
     }
 
-    public boolean isLocalClass() {
+    boolean isLocalClass() {
         return mClazz.isLocalClass();
     }
 
-    public boolean isMemberClass() {
+    boolean isMemberClass() {
         return mClazz.isMemberClass();
     }
 
-    public abstract Class<?>[] getClasses();
+    abstract Class<?>[] getClasses();
 
-    public abstract Field[] getFields();
+    abstract Field[] getFields();
 
-    public Method[] getMethods(){
+    Method[] getMethods(){
         return mClazz.getMethods();
     }
 
-    public Constructor<?>[] getConstructors() {
+    Constructor<?>[] getConstructors() {
         return mClazz.getConstructors();
     }
 
-    public Field getField(String name) throws NoSuchFieldException{
+    Field getField(String name) throws NoSuchFieldException{
         return mClazz.getField(name);
     }
-    public Method getMethod(String name, Class<?>... parameterTypes)
+    Method getMethod(String name, Class<?>... parameterTypes)
             throws NoSuchMethodException, SecurityException {
         return mClazz.getMethod(name, parameterTypes);
     }
 
-    public Constructor<?> getConstructor(Class<?>... parameterTypes)
+    Constructor<?> getConstructor(Class<?>... parameterTypes)
             throws NoSuchMethodException, SecurityException {
         return mClazz.getConstructor(parameterTypes);
     }
 
-    public Class<?>[] getDeclaredClasses() {
+    Class<?>[] getDeclaredClasses() {
         return mClazz.getDeclaredClasses();
     }
 
-    public abstract Field[] getDeclaredFields();
+    abstract Field[] getDeclaredFields();
+
+    //hide
+    Field[] getDeclaredFieldsUnchecked(boolean publicOnly) {
+        Method method = getMethodInternal("getDeclaredFieldsUnchecked", boolean.class);
+        Field[] rtn = null;
+        try {
+            rtn = (Field[]) method.invoke(mClazz, publicOnly);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return rtn;
+    }
+
+    abstract Method[] getDeclaredMethods();
+
+    //hide
+    Method getInstanceMethod(String name, Class<?>[] parameterTypes) {
+        Method method = getMethodInternal("getInstanceMethod", parameterTypes);
+        Method rtn = null;
+        try {
+            rtn = (Method) method.invoke(mClazz, parameterTypes);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return rtn;
+    }
+
+    abstract Constructor<?> getDeclaredConstructor(Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException;
+
+    InputStream getResourceAsStream(String name) {
+        return mClazz.getResourceAsStream(name);
+    }
+
+    public java.net.URL getResource(String name) {
+        return mClazz.getResource(name);
+    }
+
+    public java.security.ProtectionDomain getProtectionDomain() {
+        return mClazz.getProtectionDomain();
+    }
+
+    public boolean desiredAssertionStatus() {
+        return mClazz.desiredAssertionStatus();
+    }
+
+    public boolean isEnum() {
+        return mClazz.isEnum();
+    }
+
+    public <T> T[] getEnumConstants() {
+        return (T[])mClazz.getEnumConstants();
+    }
+
+    //hide
+    public <T> T[] getEnumConstantsShared() {
+        Method method = getMethodInternal("getEnumConstantsShared");
+        T[] rtn = null;
+        try {
+            rtn = (T[]) method.invoke(mClazz, nullParams);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return rtn;
+    }
+
+    public <T> T cast(Object obj) {
+        return (T)mClazz.cast(obj);
+    }
+
+    public <U> Class<? extends U> asSubclass(Class<U> clazz) {
+        return mClazz.asSubclass(clazz);
+    }
+
+    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+        return mClazz.getAnnotation(annotationClass);
+    }
+
+    public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
+        return mClazz.isAnnotationPresent(annotationClass);
+    }
+
+    //start from api 24
+    public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {
+        return null;
+    }
+
+    public Annotation[] getAnnotations() {
+        return mClazz.getAnnotations();
+    }
+
+    //start from api 24
+    public <A extends Annotation> A getDeclaredAnnotation(Class<A> annotationClass) {
+        return null;
+    }
+
+    public  Annotation[] getDeclaredAnnotations() {
+        return mClazz.getDeclaredAnnotations();
+    }
+
+    //hide
+    public boolean isProxy() {
+        Method method = getMethodInternal("isProxy");
+        boolean rtn = false;
+        try {
+            rtn = (boolean) method.invoke(mClazz, nullParams);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return rtn;
+    }
+    //hide
+    public int getAccessFlags() {
+        Method method = getMethodInternal("getAccessFlags");
+        int rtn = -1;
+        try {
+            rtn = (int) method.invoke(mClazz, nullParams);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return rtn;
+    }
 }

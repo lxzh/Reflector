@@ -77,5 +77,13 @@ public class MainActivity extends AppCompatActivity {
         for (Method method : methods) {
             Log.d(TAG, "method1=" + method);
         }
+        try {
+            methods = Class.forName("android.app.ActivityThread").getDeclaredMethods();
+            for (Method method : methods) {
+                Log.d(TAG, "method2=" + method);
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 }

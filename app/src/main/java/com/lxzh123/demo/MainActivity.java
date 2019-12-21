@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.lxzh123.reflector.ReflectAll;
 import com.lxzh123.reflector.Reflector;
 
 import java.lang.reflect.Field;
@@ -71,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
         fields = Reflector.on(Dialog.class).getDeclaredFieldsUnchecked(false);
         for (Field field : fields) {
             Log.d(TAG, "field3=" + field);
+        }
+
+        ReflectAll.unhideAll();
+        fields = ReflectAll.forName("android.app.Dialog").getDeclaredFields();
+        for (Field field : fields) {
+            Log.d(TAG, "field4=" + field);
         }
 
         methods = Reflector.forName("android.app.ActivityThread").getDeclaredMethods();

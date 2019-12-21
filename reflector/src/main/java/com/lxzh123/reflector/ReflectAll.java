@@ -15,31 +15,23 @@ import static android.os.Build.VERSION.SDK_INT;
  * author      Created by lxzh
  * date        2019-11-25
  */
-public class Reflector {
+public class ReflectAll {
     private final Class mClass;
     private final Object mObject;
     private Reflector00 reflector;
 //    private final boolean isClass;
 
     private void init() {
-        if (SDK_INT < 24) {
-            reflector = new Reflector01(mClass);
-        } else if (SDK_INT < 26) {
-            reflector = new Reflector24(mClass);
-        } else if (SDK_INT < 28) {
-            reflector = new Reflector26(mClass);
-        } else {
-            reflector = new Reflector28(mClass);
-        }
+        reflector = new Reflector01(mClass);
     }
 
-    private Reflector(Class<?> type) {
+    private ReflectAll(Class<?> type) {
         mClass = type;
         mObject = null;
         init();
     }
 
-    private Reflector(Object object) {
+    private ReflectAll(Object object) {
         mClass = object.getClass();
         mObject = object;
         init();
@@ -53,24 +45,24 @@ public class Reflector {
         return mObject;
     }
 
-    public static Reflector forName(String name) throws ReflectException {
+    public static ReflectAll forName(String name) throws ReflectException {
         try {
             if (SDK_INT < 28) {
-                return new Reflector(Class.forName(name));
+                return new ReflectAll(Class.forName(name));
             } else {
-                return new Reflector(Reflector28.forName(name));
+                return new ReflectAll(Class.forName(name));
             }
         } catch (Exception e) {
             throw new ReflectException(e);
         }
     }
 
-    public static Reflector on(Class clazz) {
-        return new Reflector(clazz);
+    public static ReflectAll on(Class clazz) {
+        return new ReflectAll(clazz);
     }
 
-    public static Reflector with(Object object) {
-        return new Reflector(object);
+    public static ReflectAll with(Object object) {
+        return new ReflectAll(object);
     }
 
 
@@ -285,13 +277,16 @@ public class Reflector {
         return reflector.getAccessFlags();
     }
 
-    static {
+    public static void unhideAll() {
         try {
-            System.loadLibrary("reflector");
-        }catch (Throwable t){
-            t.printStackTrace();
+            Class reflectAll = Class.forName("com.lxzh123.reflector.ReflectAll");
+            Class classClz = Class.class;
+            Method getDeclaredField = classClz.getDeclaredMethod("getDeclaredField", String.class);
+            Field classLoaderField = (Field) getDeclaredField.invoke(classClz, "classLoader");
+            classLoaderField.setAccessible(true);
+            classLoaderField.set(reflectAll, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
-    public static native void unhideAll();
 }

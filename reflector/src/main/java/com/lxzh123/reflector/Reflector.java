@@ -19,6 +19,7 @@ public class Reflector {
     private final Class mClass;
     private final Object mObject;
     private Reflector00 reflector;
+    private static volatile Reflector instance;
 //    private final boolean isClass;
 
     private void init() {
@@ -285,13 +286,32 @@ public class Reflector {
         return reflector.getAccessFlags();
     }
 
-    static {
-        try {
-            System.loadLibrary("reflector");
-        }catch (Throwable t){
-            t.printStackTrace();
+//    static {
+//        try {
+//            System.loadLibrary("reflector");
+//        }catch (Throwable t){
+//            t.printStackTrace();
+//        }
+//    }
+
+//    public static native void unhideAll();
+
+    private static Reflector getInstance() {
+        if (instance == null) {
+            synchronized (Reflector.class) {
+                if (instance == null) {
+                    instance = new Reflector(Class.class);
+                }
+            }
         }
+        return instance;
     }
 
-    public static native void unhideAll();
+    public static boolean unHide(String method) {
+        return getInstance().reflector.unHide(method);
+    }
+
+    public static boolean unHideAll() {
+        return getInstance().reflector.unHideAll();
+    }
 }

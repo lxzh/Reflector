@@ -12,6 +12,8 @@ import com.lxzh123.reflector.Reflector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = "TestReflector";
 
@@ -39,17 +41,19 @@ public class MainActivity extends AppCompatActivity {
             t.printStackTrace();
         }
 
-        classes = Reflector.forName("java.lang.invoke.MethodHandles").getClasses();
-        for (Class clz : classes) {
-            Log.d(TAG, "class1=" + clz);
-        }
-        try {
-            classes = Class.forName("java.lang.invoke.MethodHandles").getClasses();
+        if(SDK_INT>=28) {
+            classes = Reflector.forName("java.lang.invoke.MethodHandles").getClasses();
             for (Class clz : classes) {
-                Log.d(TAG, "class2=" + clz);
+                Log.d(TAG, "class1=" + clz);
             }
-        } catch (Throwable t) {
-            t.printStackTrace();
+            try {
+                classes = Class.forName("java.lang.invoke.MethodHandles").getClasses();
+                for (Class clz : classes) {
+                    Log.d(TAG, "class2=" + clz);
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         }
 
         Log.d(TAG, "VMRuntime1=" + Reflector.forName("dalvik.system.VMRuntime").get());
@@ -74,11 +78,23 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "field3=" + field);
         }
 
+        ReflectAll.testMethod();
+        ReflectAll.testField();
+//        Reflector.unhideAll();
         ReflectAll.unhideAll();
+        ReflectAll.testMethod();
+        ReflectAll.testField();
         fields = ReflectAll.forName("android.app.Dialog").getDeclaredFields();
         for (Field field : fields) {
             Log.d(TAG, "field4=" + field);
         }
+
+        Reflector.unHideAll();
+        fields = Dialog.class.getDeclaredFields();
+        for (Field field : fields) {
+            Log.d(TAG, "field5=" + field);
+        }
+
 
         methods = Reflector.forName("android.app.ActivityThread").getDeclaredMethods();
         for (Method method : methods) {

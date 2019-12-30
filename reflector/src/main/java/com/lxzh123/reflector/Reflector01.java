@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
  * author      Created by lxzh
  * date        2019-11-25
  */
-public class Reflector01 extends Reflector00 {
+class Reflector01 extends Reflector00 {
     Reflector01(Class clazz) {
         super(clazz);
     }
@@ -85,5 +85,15 @@ public class Reflector01 extends Reflector00 {
     @Override
     Constructor<?> getDeclaredConstructor(Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException{
         return mClazz.getDeclaredConstructor(parameterTypes);
+    }
+
+    @Override
+    public boolean unHide(String method) {
+        return true;
+    }
+
+    @Override
+    public boolean unHideAll() {
+        return true;
     }
 }

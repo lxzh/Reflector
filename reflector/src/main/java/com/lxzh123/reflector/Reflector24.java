@@ -9,7 +9,7 @@ import java.lang.annotation.Annotation;
  * author      Created by lxzh
  * date        2019-11-25
  */
-public class Reflector24 extends Reflector01 {
+class Reflector24 extends Reflector01 {
     Reflector24(Class clazz) {
         super(clazz);
     }

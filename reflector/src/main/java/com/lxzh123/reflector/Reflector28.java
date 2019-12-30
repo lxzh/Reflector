@@ -9,14 +9,21 @@ import java.lang.reflect.Method;
  * author      Created by lxzh
  * date        2019-11-25
  */
-public class Reflector28 extends Reflector26 {
+class Reflector28 extends Reflector26 {
     static Method forNameMethod = null;
     static Method getDeclareMethod = null;
+    private static Object sVmRuntime = null;
+    private static Method setHiddenApiExemptions = null;
 
     static {
         try {
             forNameMethod = Class.class.getDeclaredMethod("forName", String.class);
             getDeclareMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
+
+            Class<?> vmRuntimeClass = (Class<?>) forNameMethod.invoke(null, "dalvik.system.VMRuntime");
+            Method getRuntime = (Method) getDeclareMethod.invoke(vmRuntimeClass, "getRuntime", null);
+            setHiddenApiExemptions = (Method) getDeclareMethod.invoke(vmRuntimeClass, "setHiddenApiExemptions", new Class[]{String[].class});
+            sVmRuntime = getRuntime.invoke(null);
         } catch (Throwable ex) {
             ex.printStackTrace();
         }
@@ -31,7 +38,7 @@ public class Reflector28 extends Reflector26 {
         Method method = reflectorMaps.get(methodName);
         if (method == null) {
             try {
-                method = (Method)getDeclareMethod.invoke(Class.class, methodName, nullTypes);
+                method = (Method) getDeclareMethod.invoke(Class.class, methodName, nullTypes);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
@@ -45,7 +52,7 @@ public class Reflector28 extends Reflector26 {
         Method method = reflectorMaps.get(methodName + parameterTypes.hashCode());
         if (method == null) {
             try {
-                method = (Method)getDeclareMethod.invoke(Class.class, methodName, parameterTypes);
+                method = (Method) getDeclareMethod.invoke(Class.class, methodName, parameterTypes);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
@@ -62,8 +69,8 @@ public class Reflector28 extends Reflector26 {
     static Class<?> forName(String name) {
         Class<?> rtn = null;
         try {
-            rtn = (Class<?>)forNameMethod.invoke(Class.class, name);
-        }catch (Throwable t) {
+            rtn = (Class<?>) forNameMethod.invoke(Class.class, name);
+        } catch (Throwable t) {
             t.printStackTrace();
         }
         return rtn;
@@ -111,7 +118,7 @@ public class Reflector28 extends Reflector26 {
     }
 
     @Override
-    Method[] getDeclaredMethods(){
+    Method[] getDeclaredMethods() {
         Method method = getMethodInternal("getDeclaredMethods");
         Method[] rtn = null;
         try {
@@ -124,11 +131,11 @@ public class Reflector28 extends Reflector26 {
 
     @Override
     Method getInstanceMethod(String name, Class<?>[] parameterTypes) {
-        return super.getInstanceMethod(name,parameterTypes);
+        return super.getInstanceMethod(name, parameterTypes);
     }
 
     @Override
-    Constructor<?> getDeclaredConstructor(Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException{
+    Constructor<?> getDeclaredConstructor(Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
         Method method = getMethodInternal("getDeclaredConstructor", parameterTypes);
         Constructor<?> rtn = null;
         try {
@@ -137,5 +144,28 @@ public class Reflector28 extends Reflector26 {
             t.printStackTrace();
         }
         return rtn;
+    }
+
+    public boolean unHide(String... methods) {
+        if (sVmRuntime == null || setHiddenApiExemptions == null) {
+            return false;
+        }
+
+        try {
+            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{methods});
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean unHide(String method) {
+        return unHide(new String[]{method});
+    }
+
+    @Override
+    public boolean unHideAll() {
+        return unHide(new String[]{"L"});
     }
 }

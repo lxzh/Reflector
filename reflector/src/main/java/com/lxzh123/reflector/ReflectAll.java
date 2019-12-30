@@ -1,5 +1,7 @@
 package com.lxzh123.reflector;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -22,7 +24,15 @@ public class ReflectAll {
 //    private final boolean isClass;
 
     private void init() {
-        reflector = new Reflector01(mClass);
+        if (SDK_INT < 24) {
+            reflector = new Reflector01(mClass);
+        } else if (SDK_INT < 26) {
+            reflector = new Reflector24(mClass);
+        } else if (SDK_INT < 28) {
+            reflector = new Reflector26(mClass);
+        } else {
+            reflector = new Reflector28(mClass);
+        }
     }
 
     private ReflectAll(Class<?> type) {
@@ -47,11 +57,7 @@ public class ReflectAll {
 
     public static ReflectAll forName(String name) throws ReflectException {
         try {
-            if (SDK_INT < 28) {
-                return new ReflectAll(Class.forName(name));
-            } else {
-                return new ReflectAll(Class.forName(name));
-            }
+            return new ReflectAll(Class.forName(name));
         } catch (Exception e) {
             throw new ReflectException(e);
         }
@@ -67,23 +73,23 @@ public class ReflectAll {
 
 
     public ClassLoader getClassLoader() {
-        return reflector.getClassLoader();
+        return mClass.getClassLoader();
     }
 
     public synchronized TypeVariable<? extends Class>[] getTypeParameters() {
-        return reflector.getTypeParameters();
+        return mClass.getTypeParameters();
     }
 
     public Class getSuperclass() {
-        return reflector.getSuperclass();
+        return mClass.getSuperclass();
     }
 
     public Type getGenericSuperclass() {
-        return reflector.getGenericSuperclass();
+        return mClass.getGenericSuperclass();
     }
 
     public Package getPackage() {
-        return reflector.getPackage();
+        return mClass.getPackage();
     }
 
     public String getPackageName$() {
@@ -91,43 +97,43 @@ public class ReflectAll {
     }
 
     public Class<?>[] getInterfaces() {
-        return reflector.getInterfaces();
+        return mClass.getInterfaces();
     }
 
     public Type[] getGenericInterfaces() {
-        return reflector.getGenericInterfaces();
+        return mClass.getGenericInterfaces();
     }
 
     public Class<?> getComponentType() {
-        return reflector.getComponentType();
+        return mClass.getComponentType();
     }
 
     public int getModifiers() {
-        return reflector.getModifiers();
+        return mClass.getModifiers();
     }
 
     public Object[] getSigners() {
-        return reflector.getSigners();
+        return mClass.getSigners();
     }
 
     public Method getEnclosingMethod() {
-        return reflector.getEnclosingMethod();
+        return mClass.getEnclosingMethod();
     }
 
     public Constructor<?> getEnclosingConstructor() {
-        return reflector.getEnclosingConstructor();
+        return mClass.getEnclosingConstructor();
     }
 
     public Class<?> getDeclaringClass() {
-        return reflector.getDeclaringClass();
+        return mClass.getDeclaringClass();
     }
 
     public Class<?> getEnclosingClass() {
-        return reflector.getEnclosingClass();
+        return mClass.getEnclosingClass();
     }
 
     public String getSimpleName() {
-        return reflector.getSimpleName();
+        return mClass.getSimpleName();
     }
 
     public String getTypeName() {
@@ -136,57 +142,57 @@ public class ReflectAll {
 
 
     public String getCanonicalName() {
-        return reflector.getCanonicalName();
+        return mClass.getCanonicalName();
     }
 
     public boolean isAnonymousClass() {
-        return reflector.isAnonymousClass();
+        return mClass.isAnonymousClass();
     }
 
     public boolean isLocalClass() {
-        return reflector.isLocalClass();
+        return mClass.isLocalClass();
     }
 
     public boolean isMemberClass() {
-        return reflector.isMemberClass();
+        return mClass.isMemberClass();
     }
 
     public Class<?>[] getClasses() {
-        return reflector.getClasses();
+        return mClass.getClasses();
     }
 
     public Field[] getFields() {
-        return reflector.getFields();
+        return mClass.getFields();
     }
 
     public Method[] getMethods() {
-        return reflector.getMethods();
+        return mClass.getMethods();
     }
 
     public Constructor<?>[] getConstructors() {
-        return reflector.getConstructors();
+        return mClass.getConstructors();
     }
 
     public Field getField(String name) throws NoSuchFieldException {
-        return reflector.getField(name);
+        return mClass.getField(name);
     }
 
     public Method getMethod(String name, Class<?>... parameterTypes)
             throws NoSuchMethodException, SecurityException {
-        return reflector.getMethod(name, parameterTypes);
+        return mClass.getMethod(name, parameterTypes);
     }
 
     public Constructor<?> getConstructor(Class<?>... parameterTypes)
             throws NoSuchMethodException, SecurityException {
-        return reflector.getConstructor(parameterTypes);
+        return mClass.getConstructor(parameterTypes);
     }
 
     public Class<?>[] getDeclaredClasses() {
-        return reflector.getDeclaredClasses();
+        return mClass.getDeclaredClasses();
     }
 
     public Field[] getDeclaredFields() {
-        return reflector.getDeclaredFields();
+        return mClass.getDeclaredFields();
     }
 
     public Field[] getDeclaredFieldsUnchecked(boolean publicOnly) {
@@ -194,7 +200,7 @@ public class ReflectAll {
     }
 
     public Method[] getDeclaredMethods() {
-        return reflector.getDeclaredMethods();
+        return mClass.getDeclaredMethods();
     }
 
     public Method getInstanceMethod(String name, Class<?>[] parameterTypes) {
@@ -203,31 +209,31 @@ public class ReflectAll {
 
     public Constructor<?> getDeclaredConstructor(Class<?>... parameterTypes)
             throws NoSuchMethodException, SecurityException {
-        return reflector.getDeclaredConstructor(parameterTypes);
+        return mClass.getDeclaredConstructor(parameterTypes);
     }
 
     public InputStream getResourceAsStream(String name) {
-        return reflector.getResourceAsStream(name);
+        return mClass.getResourceAsStream(name);
     }
 
     public java.net.URL getResource(String name) {
-        return reflector.getResource(name);
+        return mClass.getResource(name);
     }
 
     public java.security.ProtectionDomain getProtectionDomain() {
-        return reflector.getProtectionDomain();
+        return mClass.getProtectionDomain();
     }
 
     public boolean desiredAssertionStatus() {
-        return reflector.desiredAssertionStatus();
+        return mClass.desiredAssertionStatus();
     }
 
     public boolean isEnum() {
-        return reflector.isEnum();
+        return mClass.isEnum();
     }
 
     public <T> T[] getEnumConstants() {
-        return reflector.getEnumConstants();
+        return (T[])mClass.getEnumConstants();
     }
 
     //hide
@@ -236,19 +242,19 @@ public class ReflectAll {
     }
 
     public <T> T cast(Object obj) {
-        return reflector.cast(obj);
+        return (T)mClass.cast(obj);
     }
 
     public <U> Class<? extends U> asSubclass(Class<U> clazz) {
-        return reflector.asSubclass(clazz);
+        return mClass.asSubclass(clazz);
     }
 
     public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-        return reflector.getAnnotation(annotationClass);
+        return (A)mClass.getAnnotation(annotationClass);
     }
 
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
-        return reflector.isAnnotationPresent(annotationClass);
+        return mClass.isAnnotationPresent(annotationClass);
     }
 
     public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {
@@ -264,7 +270,7 @@ public class ReflectAll {
     }
 
     public Annotation[] getDeclaredAnnotations() {
-        return reflector.getDeclaredAnnotations();
+        return mClass.getDeclaredAnnotations();
     }
 
     //hide
@@ -277,6 +283,9 @@ public class ReflectAll {
         return reflector.getAccessFlags();
     }
 
+    /**
+     * 仅对API28有效，API29失效
+     */
     public static void unhideAll() {
         try {
             Class reflectAll = Class.forName("com.lxzh123.reflector.ReflectAll");
@@ -288,5 +297,34 @@ public class ReflectAll {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private final static String TAG = "TestReflector";
+
+    public static void testMethod() {
+        try {
+            Class clz = Class.forName("android.app.ActivityThread");
+            Method method = clz.getDeclaredMethod("getIntentBeingBroadcast");
+            method.setAccessible(true);
+            method.invoke(null);
+            Log.e(TAG, "testMethod: getDeclaredMethod->getIntentBeingBroadcast success");
+        } catch (Exception e) {
+//            e.printStackTrace();
+            Log.e(TAG, "testMethod: getDeclaredMethod->getIntentBeingBroadcast failed");
+        }
+    }
+
+    public static void testField() {
+        try {
+            Class clz = Class.forName("android.app.ActivityThread");
+            Field field = clz.getDeclaredField("TAG");
+            field.setAccessible(true);
+            field.get(null);
+            Log.e(TAG, "testField: getDeclaredField->TAG of ActivityThread success");
+        } catch (Exception e) {
+//            e.printStackTrace();
+            Log.e(TAG, "testField: getDeclaredField->TAG of ActivityThread failed");
+        }
+
     }
 }

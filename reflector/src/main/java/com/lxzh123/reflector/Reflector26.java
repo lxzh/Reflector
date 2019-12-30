@@ -7,7 +7,7 @@ import android.annotation.TargetApi;
  * author      Created by lxzh
  * date        2019-11-25
  */
-public class Reflector26 extends Reflector01 {
+class Reflector26 extends Reflector01 {
     Reflector26(Class clazz) {
         super(clazz);
     }

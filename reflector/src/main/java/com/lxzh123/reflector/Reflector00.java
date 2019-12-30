@@ -15,7 +15,7 @@ import java.util.Map;
  * author      Created by lxzh
  * date        2019-11-25
  */
-public abstract class Reflector00 {
+abstract class Reflector00 {
 
     static Map<String, Method> reflectorMaps = new HashMap();
     protected Class<?> mClazz;
@@ -276,4 +276,8 @@ public abstract class Reflector00 {
         }
         return rtn;
     }
+
+    public abstract boolean unHide(String method);
+
+    public abstract boolean unHideAll();
 }

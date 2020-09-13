@@ -17,7 +17,8 @@ import java.util.Map;
  */
 abstract class Reflector00 {
 
-    static Map<String, Method> reflectorMaps = new HashMap();
+    static Map<String, Method> methodsMaps = new HashMap();
+    static Map<String, Field> fieldsMaps = new HashMap();
     protected Class<?> mClazz;
     protected Object mObject;
     static Class[] nullTypes = new Class[0];
@@ -35,6 +36,8 @@ abstract class Reflector00 {
     protected abstract Method getMethodInternal(String methodName);
 
     protected abstract Method getMethodInternal(String methodName, Class<?>... parameterTypes);
+
+    protected abstract Field getFieldInternal(String fieldName);
 
     ClassLoader getClassLoader() {
         return mClazz.getClassLoader();
@@ -155,6 +158,8 @@ abstract class Reflector00 {
     }
 
     abstract Field[] getDeclaredFields();
+
+    abstract Field getDeclaredField(String name) throws NoSuchFieldException;
 
     //hide
     Field[] getDeclaredFieldsUnchecked(boolean publicOnly) {

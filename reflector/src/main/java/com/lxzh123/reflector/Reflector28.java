@@ -35,30 +35,44 @@ class Reflector28 extends Reflector26 {
 
     @Override
     protected synchronized Method getMethodInternal(String methodName) {
-        Method method = reflectorMaps.get(methodName);
+        Method method = methodsMaps.get(methodName);
         if (method == null) {
             try {
                 method = (Method) getDeclareMethod.invoke(Class.class, methodName, nullTypes);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-            reflectorMaps.put(methodName, method);
+            methodsMaps.put(methodName, method);
         }
         return method;
     }
 
     @Override
     protected synchronized Method getMethodInternal(String methodName, Class<?>... parameterTypes) {
-        Method method = reflectorMaps.get(methodName + parameterTypes.hashCode());
+        Method method = methodsMaps.get(methodName + parameterTypes.hashCode());
         if (method == null) {
             try {
                 method = (Method) getDeclareMethod.invoke(Class.class, methodName, parameterTypes);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-            reflectorMaps.put(methodName + parameterTypes.hashCode(), method);
+            methodsMaps.put(methodName + parameterTypes.hashCode(), method);
         }
         return method;
+    }
+
+    @Override
+    protected synchronized Field getFieldInternal(String fieldName) {
+        Field field = fieldsMaps.get(fieldName);
+        if (field == null) {
+            try {
+                field = (Field) mClazz.getDeclaredField(fieldName);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            fieldsMaps.put(fieldName, field);
+        }
+        return field;
     }
 
     @Override
@@ -106,6 +120,18 @@ class Reflector28 extends Reflector26 {
         Field[] rtn = null;
         try {
             rtn = (Field[]) method.invoke(mClazz, nullParams);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return rtn;
+    }
+
+    @Override
+    Field getDeclaredField(String name) {
+        Method method = getMethodInternal("getDeclaredField", String.class);
+        Field rtn = null;
+        try {
+            rtn = (Field) method.invoke(mClazz, name);
         } catch (Throwable t) {
             t.printStackTrace();
         }

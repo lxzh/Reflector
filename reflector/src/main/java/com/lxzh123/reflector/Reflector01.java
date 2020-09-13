@@ -16,30 +16,44 @@ class Reflector01 extends Reflector00 {
 
     @Override
     protected synchronized Method getMethodInternal(String methodName) {
-        Method method = reflectorMaps.get(methodName);
+        Method method = methodsMaps.get(methodName);
         if (method == null) {
             try {
                 method = (Method) mClazz.getDeclaredMethod(methodName, nullTypes);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-            reflectorMaps.put(methodName, method);
+            methodsMaps.put(methodName, method);
         }
         return method;
     }
 
     @Override
     protected synchronized Method getMethodInternal(String methodName, Class<?>... parameterTypes) {
-        Method method = reflectorMaps.get(methodName + parameterTypes.hashCode());
+        Method method = methodsMaps.get(methodName + parameterTypes.hashCode());
         if (method == null) {
             try {
                 method = (Method) mClazz.getDeclaredMethod(methodName, parameterTypes);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-            reflectorMaps.put(methodName + parameterTypes.hashCode(), method);
+            methodsMaps.put(methodName + parameterTypes.hashCode(), method);
         }
         return method;
+    }
+
+    @Override
+    protected synchronized Field getFieldInternal(String fieldName) {
+        Field field = fieldsMaps.get(fieldName);
+        if (field == null) {
+            try {
+                field = (Field) mClazz.getDeclaredField(fieldName);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            fieldsMaps.put(fieldName, field);
+        }
+        return field;
     }
 
     @Override
@@ -65,6 +79,11 @@ class Reflector01 extends Reflector00 {
     @Override
     Field[] getDeclaredFields() {
         return mClazz.getDeclaredFields();
+    }
+
+    @Override
+    Field getDeclaredField(String name) throws NoSuchFieldException {
+        return mClazz.getDeclaredField(name);
     }
 
     @Override

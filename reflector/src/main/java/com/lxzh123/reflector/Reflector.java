@@ -198,6 +198,10 @@ public class Reflector {
         return reflector.getDeclaredFields();
     }
 
+    public Field getDeclaredFields(String name) throws NoSuchFieldException {
+        return reflector.getDeclaredFields(name);
+    }
+
     public Field[] getDeclaredFieldsUnchecked(boolean publicOnly) {
         return reflector.getDeclaredFieldsUnchecked(publicOnly);
     }

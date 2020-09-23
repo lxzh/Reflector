@@ -9,8 +9,12 @@
 /.idea/assetWizardSettings.xml
 /.idea/jarRepositories.xml
 /.idea/gradle.xml
+/.idea/misc.xml
+/.idea/qaplug_profiles.xml
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
+.project
+.settings

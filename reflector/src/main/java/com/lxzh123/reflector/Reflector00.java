@@ -180,7 +180,7 @@ abstract class Reflector00 {
         Method method = getMethodInternal("getInstanceMethod", parameterTypes);
         Method rtn = null;
         try {
-            rtn = (Method) method.invoke(mClazz, parameterTypes);
+            rtn = (Method) method.invoke(mClazz, (Object[]) parameterTypes);
         } catch (Throwable t) {
             t.printStackTrace();
         }

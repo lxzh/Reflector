@@ -38,6 +38,9 @@ android {
             version "3.10.2"
         }
     }
+    lintOptions {
+        abortOnError false
+    }
 
 }
 

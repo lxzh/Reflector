@@ -1,16 +1,15 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+apply from: 'maven-upload.gradle'
 
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
-
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 29
-        versionCode 2
-        versionName "1.1.0"
+        versionCode VERSION_CODE as int
+        versionName VERSION_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -47,27 +46,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-}
-
-
-
-task androidSourcesJar(type: Jar) {
-    classifier = 'sources'
-    from project.file('src/main/java/com/lxzh123/reflector/Main.java')
-}
-
-artifacts {
-    archives androidSourcesJar
-//    archives androidJavadocsJar
-}
-
-publish {
-    artifactId = 'reflector'
-    userOrg = 'lxzh'
-    groupId = 'com.lxzh123'
-    uploadName = 'reflector'
-    publishVersion = '1.1.0'
-    desc = 'A fluent reflector that supports Android  4.0~10.0'
-    website = 'https://github.com/ljf1239848066/Reflector'
-    licences = ['Apache-2.0']
 }
